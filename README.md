@@ -55,6 +55,16 @@ npm run dev                # http://localhost:8788
    npm run db:init
    ```
 
+   **Panelden yapacaksanız:** D1 veritabanı → **Console** sekmesinde
+   `schema.console.sql` dosyasını kullanın. Bu dosya yorumsuz ve her ifade tek satırdır;
+   `schema.sql` içindeki `--` yorumları panel konsolunda "incomplete input" hatasına yol
+   açabilir. İki satırı ayrı ayrı çalıştırın:
+
+   1. `CREATE TABLE ...` satırı → **Execute**
+   2. `CREATE INDEX ...` satırı → **Execute**
+
+   Tablo zaten oluşmuşsa önce `DROP TABLE IF EXISTS responses;` çalıştırın.
+
 3. **Yönetici anahtarını secret olarak tanımlayın**
 
    ```bash

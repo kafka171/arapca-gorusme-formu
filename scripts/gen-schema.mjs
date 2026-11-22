@@ -7,6 +7,7 @@ import { form } from "../functions/_lib/form.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const target = resolve(here, "..", "schema.sql");
+const consoleTarget = resolve(here, "..", "schema.console.sql");
 
 const quote = (s) => `"${s.replace(/"/g, '""')}"`;
 const fields = form.sections.flatMap((s) => s.fields);
@@ -41,8 +42,24 @@ const lines = [
 ];
 
 writeFileSync(target, lines.join("\n"), "utf8");
+
+// Cloudflare panelindeki D1 Console icin: yorumsuz, tek satirlik ifadeler.
+// (Konsol yorumlari/satir sonlarini bozunca "incomplete input" hatasi veriyor.)
+const columnDefs = [
+  "id INTEGER PRIMARY KEY AUTOINCREMENT",
+  "created_at DATETIME NOT NULL DEFAULT (datetime('now'))",
+  ...fields.map((f) => `${quote(f.name)} ${sqlType(f)}${f.required ? " NOT NULL" : ""}`),
+];
+
+const consoleLines = [
+  `CREATE TABLE IF NOT EXISTS responses (${columnDefs.join(", ")});`,
+  "CREATE INDEX IF NOT EXISTS idx_responses_created_at ON responses (created_at);",
+];
+
+writeFileSync(consoleTarget, consoleLines.join("\n"), "utf8");
+
 console.log(
-  `schema.sql yazildi (${fields.length} soru sutunu, ${requiredCount} zorunlu / ${
+  `schema.sql ve schema.console.sql yazildi (${fields.length} soru sutunu, ${requiredCount} zorunlu / ${
     fields.length - requiredCount
   } istege bagli).`,
 );
