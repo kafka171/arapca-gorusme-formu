@@ -1,0 +1,48 @@
+// form.js tek kaynagindan schema.sql uretir.
+// Kullanim: node scripts/gen-schema.mjs
+import { writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+import { form } from "../functions/_lib/form.js";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const target = resolve(here, "..", "schema.sql");
+
+const quote = (s) => `"${s.replace(/"/g, '""')}"`;
+const fields = form.sections.flatMap((s) => s.fields);
+const requiredCount = fields.filter((f) => f.required).length;
+
+// Tarih/saat sorulari TEXT degil, semantik SQLite tipleriyle tanimlanir.
+const sqlType = (f) => (f.type === "date" ? "DATE" : f.type === "time" ? "TIME" : "TEXT");
+
+const lines = [
+  "-- Cloudflare D1 (SQLite) semasi.",
+  "-- Uretim: node scripts/gen-schema.mjs (kaynak: functions/_lib/form.js)",
+  "--",
+  "-- Soru alanlari: metin/secenek sorulari TEXT, tarih sorulari DATE, saat sorulari TIME.",
+  "-- NOT NULL : formda zorunlu (*) alanlar - deger NULL olamaz (bosluk denetimi sunucuda).",
+  "-- NULL     : formda istege bagli alanlar - yanit verilmezse NULL yazilir.",
+  `-- Zorunlu: ${requiredCount} / ${fields.length} alan`,
+  "",
+  "CREATE TABLE IF NOT EXISTS responses (",
+  "  id INTEGER PRIMARY KEY AUTOINCREMENT,",
+  "  -- Kayit zamani (ISO-8601)",
+  "  created_at DATETIME NOT NULL DEFAULT (datetime('now')),",
+  ...fields.map(
+    (f, i) =>
+      `  ${quote(f.name)} ${sqlType(f)}${f.required ? " NOT NULL" : ""}${
+        i === fields.length - 1 ? "" : ","
+      }  -- ${f.required ? "zorunlu" : "istege bagli"}`,
+  ),
+  ");",
+  "",
+  "CREATE INDEX IF NOT EXISTS idx_responses_created_at ON responses (created_at);",
+  "",
+];
+
+writeFileSync(target, lines.join("\n"), "utf8");
+console.log(
+  `schema.sql yazildi (${fields.length} soru sutunu, ${requiredCount} zorunlu / ${
+    fields.length - requiredCount
+  } istege bagli).`,
+);

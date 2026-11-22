@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Yanıtlar · Görüşme Formu Yönetimi</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/admin.css" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">İçeriğe geç</a>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <span class="brand">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <span class="brand-text">Görüşme Formu · Yönetim</span>
+        </span>
+        <a class="admin-link" href="/">Forma dön</a>
+      </div>
+    </header>
+
+    <main id="main" class="page page-wide">
+      <section id="login-view" class="card state-card" hidden>
+        <h1>Yönetici girişi</h1>
+        <p class="state-text">Yanıtları görüntülemek için yönetici anahtarını girin.</p>
+        <form id="login-form" class="login-form">
+          <label class="sr-only" for="admin-key">Yönetici anahtarı</label>
+          <input id="admin-key" type="password" autocomplete="current-password" placeholder="Yönetici anahtarı" />
+          <button class="btn primary" type="submit">Giriş</button>
+        </form>
+        <p id="login-error" class="error-text" role="alert" hidden></p>
+      </section>
+
+      <section id="panel-view" class="card" hidden>
+        <div class="panel-head">
+          <div>
+            <h1>Yanıtlar</h1>
+            <p class="panel-sub" id="panel-sub">Yükleniyor…</p>
+          </div>
+          <div class="panel-actions">
+            <button id="btn-refresh" class="btn ghost" type="button">Yenile</button>
+            <button id="btn-csv" class="btn primary" type="button">CSV indir</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <label class="sr-only" for="search">Yanıtlarda ara</label>
+          <input id="search" type="search" placeholder="Yanıtlarda ara (okul, öğretmen, metin…)" />
+        </div>
+
+        <div class="table-wrap">
+          <table class="responses">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Kayıt zamanı</th>
+                <th scope="col">Ders</th>
+                <th scope="col">Ünite</th>
+                <th scope="col">Okul</th>
+                <th scope="col">Öğretmen</th>
+                <th scope="col"><span class="sr-only">İşlemler</span></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <p id="empty" class="state-text empty" hidden>Henüz yanıt yok.</p>
+      </section>
+
+      <section id="admin-error" class="card state-card" hidden>
+        <h2>Bir sorun oluştu</h2>
+        <p id="admin-error-text" class="state-text"></p>
+        <button id="btn-retry" class="btn primary" type="button">Tekrar dene</button>
+      </section>
+    </main>
+
+    <dialog id="detail-dialog" class="detail-dialog">
+      <div class="dialog-head">
+        <h2 id="detail-title">Yanıt detayı</h2>
+        <button id="btn-close-dialog" class="icon-btn" type="button" aria-label="Kapat">✕</button>
+      </div>
+      <div id="detail-body" class="detail-body"></div>
+      <div class="dialog-foot">
+        <button id="btn-close-dialog-2" class="btn ghost" type="button">Kapat</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="/admin.js"></script>
+  </body>
+</html>

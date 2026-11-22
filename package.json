@@ -1,0 +1,20 @@
+{
+  "name": "arapca-gorusme-formu",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Arapça Dersi Ünite/Tema Sonu Görüşme Formu — Cloudflare Pages + D1 (SQLite)",
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy --project-name arapca-gorusme-formu",
+    "schema": "node scripts/gen-schema.mjs",
+    "db:init:local": "wrangler d1 execute gorusme-formu --local --file=./schema.sql",
+    "db:drop:local": "wrangler d1 execute gorusme-formu --local --command \"DROP TABLE IF EXISTS responses\"",
+    "db:init": "wrangler d1 execute gorusme-formu --remote --file=./schema.sql",
+    "db:export": "wrangler d1 export gorusme-formu --remote --output=./gorusme-formu.sql",
+    "check": "node --check functions/api/submit.js && node --check functions/api/form.js && node --check public/app.js && node --check public/admin.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  }
+}
