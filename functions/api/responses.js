@@ -1,11 +1,23 @@
-import { isAuthorized, json } from "../_lib/http.js";
+import { authStatus, json } from "../_lib/http.js";
 
 const MAX_LIMIT = 1000;
 
-export async function onRequestGet({ request, env }) {
-  if (!isAuthorized(request, env)) {
-    return json({ ok: false, error: "Yetkisiz. Yönetici anahtarı gerekli." }, 401);
+const NOT_CONFIGURED =
+  "Sunucuda ADMIN_KEY tanımlı değil. Cloudflare Pages → Settings → Variables and Secrets bölümünden Production ortamına ADMIN_KEY ekleyip yeniden deploy edin.";
+
+function deny(status) {
+  if (status === "not_configured") {
+    return json({ ok: false, code: "admin_key_missing", error: NOT_CONFIGURED }, 503);
   }
+  return json(
+    { ok: false, code: "unauthorized", error: "Yetkisiz. Yönetici anahtarı gerekli." },
+    401,
+  );
+}
+
+export async function onRequestGet({ request, env }) {
+  const status = authStatus(request, env);
+  if (status !== "ok") return deny(status);
 
   const url = new URL(request.url);
   const limit = Math.min(
@@ -31,14 +43,21 @@ export async function onRequestGet({ request, env }) {
     });
   } catch (err) {
     console.error("responses error", err);
-    return json({ ok: false, error: "Yanıtlar okunamadı." }, 500);
+    return json(
+      {
+        ok: false,
+        code: "db_error",
+        error:
+          "Yanıtlar okunamadı. D1 tablosu oluşturulmuş mu? (şema: schema.console.sql)",
+      },
+      500,
+    );
   }
 }
 
 export async function onRequestDelete({ request, env }) {
-  if (!isAuthorized(request, env)) {
-    return json({ ok: false, error: "Yetkisiz. Yönetici anahtarı gerekli." }, 401);
-  }
+  const status = authStatus(request, env);
+  if (status !== "ok") return deny(status);
 
   const url = new URL(request.url);
   const id = Number.parseInt(url.searchParams.get("id") || "", 10);

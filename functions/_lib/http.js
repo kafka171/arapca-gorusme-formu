@@ -8,11 +8,8 @@ export const json = (body, status = 200, extraHeaders = {}) =>
 
 export function adminKeyFrom(request) {
   const url = new URL(request.url);
-  return (
-    request.headers.get("x-admin-key") ||
-    url.searchParams.get("key") ||
-    ""
-  );
+  const raw = request.headers.get("x-admin-key") || url.searchParams.get("key") || "";
+  return raw.trim();
 }
 
 /** Sabit zamanli karsilastirma (anahtar uzunlugu sizdirmaz). */
@@ -28,12 +25,23 @@ export function safeEqual(a, b) {
   return diff === 0;
 }
 
-export function isAuthorized(request, env) {
-  const expected = env.ADMIN_KEY;
-  if (!expected) return false;
+/**
+ * "ok" | "not_configured" | "missing" | "invalid"
+ * Kenar bosluklar temizlenir; panelden kopyalanan degerlerdeki
+ * gorunmez bosluk/yeni satir sorun cikarmaz.
+ */
+export function authStatus(request, env) {
+  const expected = String(env.ADMIN_KEY ?? "").trim();
+  if (!expected) return "not_configured";
+
   const provided = adminKeyFrom(request);
-  if (!provided) return false;
-  return safeEqual(provided, expected);
+  if (!provided) return "missing";
+
+  return safeEqual(provided, expected) ? "ok" : "invalid";
+}
+
+export function isAuthorized(request, env) {
+  return authStatus(request, env) === "ok";
 }
 
 export const formFields = form.sections.flatMap((s) => s.fields);

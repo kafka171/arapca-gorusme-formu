@@ -89,6 +89,20 @@ npm run dev                # http://localhost:8788
 - Adres: `https://<proje>.pages.dev/admin`
 - Giriş: `ADMIN_KEY` değeri (yalnızca o sekme için `sessionStorage`'da tutulur).
 - **CSV indir** çıktısı `;` ayraçlı, UTF-8 BOM'ludur; Excel'de Türkçe karakterler doğru görünür.
+- Giriş ekranındaki **Sunucu durumunu kontrol et** düğmesi `ADMIN_KEY` tanımlı mı, D1 tablosu
+  var mı ve yayındaki sürüm hangisi bilgisini gösterir (`/api/health`).
+
+### `/admin` anahtarı kabul etmiyorsa
+
+1. Giriş ekranında **Sunucu durumunu kontrol et**'e basın.
+   - `ADMIN_KEY: tanımlı DEĞİL` → Pages → Settings → Variables and Secrets → **Production**
+     ortamına `ADMIN_KEY` (Secret) ekleyin ve **Retry deployment** yapın.
+   - `D1 tablosu: YOK` → D1 Console'da `schema.console.sql` satırlarını çalıştırın.
+   - İkisi de yeşilse anahtar değeri yanlış: secret'ı **Edit** ile yeniden yazın
+     (kopyalarken baş/son boşlukları temizleyin; sunucu yine de boşlukları kırpar).
+2. Secret **Production** ortamına mı eklendi? Preview'a eklenmişse canlı adreste çalışmaz.
+3. Secret eklendikten sonra yeni bir deployment yapıldı mı?
+4. Preview adresi (`<hash>.proje.pages.dev`) kullanıyorsanız orada da ayrı secret gerekir.
 
 ## Soruları değiştirmek
 

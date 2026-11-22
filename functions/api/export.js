@@ -1,5 +1,5 @@
 import { fields } from "../_lib/form.js";
-import { isAuthorized } from "../_lib/http.js";
+import { authStatus } from "../_lib/http.js";
 
 const oneLine = (text) => String(text ?? "").replace(/\s*\n\s*/g, " ").trim();
 
@@ -10,9 +10,14 @@ function csvCell(value) {
 }
 
 export async function onRequestGet({ request, env }) {
-  if (!isAuthorized(request, env)) {
-    return new Response("Yetkisiz. Yönetici anahtarı gerekli.", {
-      status: 401,
+  const status = authStatus(request, env);
+  if (status !== "ok") {
+    const message =
+      status === "not_configured"
+        ? "Sunucuda ADMIN_KEY tanımlı değil. Cloudflare Pages → Settings → Variables and Secrets bölümünden Production ortamına ADMIN_KEY ekleyip yeniden deploy edin."
+        : "Yetkisiz. Yönetici anahtarı gerekli.";
+    return new Response(message, {
+      status: status === "not_configured" ? 503 : 401,
       headers: { "content-type": "text/plain; charset=utf-8" },
     });
   }
