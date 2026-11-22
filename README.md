@@ -113,6 +113,15 @@ npm run worker:deploy
 npm run worker:secret        # ADMIN_KEY değerini girin
 ```
 
+Panelden (Workers Builds / Git) yayınlarken **Deploy command** alanına şunu yazın:
+
+```bash
+npx wrangler deploy --config wrangler.worker.toml
+```
+
+> Varsayılan `npx wrangler deploy` komutu kökteki `wrangler.toml` (Pages) dosyasını okur ve
+> "Missing entry-point" hatası verir.
+
 Adres: `https://arapca-gorusme-formu.<hesap-adiniz>.workers.dev`
 
 Notlar:
