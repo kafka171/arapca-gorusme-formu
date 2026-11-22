@@ -84,6 +84,42 @@ npm run dev                # http://localhost:8788
 > `wrangler.toml` içindeki `database_id` gerçek kimlikle değiştirilmelidir; aksi halde
 > yayın sırasında D1 bağlaması bulunamaz.
 
+## Workers (workers.dev) ile yayınlama
+
+Türkiye'de `*.pages.dev` BTK tarafından engellendiği için aynı uygulama Worker olarak
+`*.workers.dev` üzerinde de çalıştırılabilir. Pages yapılandırması olduğu gibi kalır.
+
+- `worker/index.js` — API yönlendirmesi + statik dosyalar
+- `wrangler.worker.toml` — Worker yapılandırması (D1 + ASSETS)
+
+Yerel çalıştırma:
+
+```bash
+npm run worker:dev
+```
+
+Yerel D1 tablosu:
+
+```bash
+npx wrangler d1 execute gorusme-formu --local --config wrangler.worker.toml --file=./schema.console.sql
+```
+
+Yayınlama:
+
+```bash
+npx wrangler login
+# wrangler.worker.toml içine gerçek database_id değerini yazın
+npm run worker:deploy
+npm run worker:secret        # ADMIN_KEY değerini girin
+```
+
+Adres: `https://arapca-gorusme-formu.<hesap-adiniz>.workers.dev`
+
+Notlar:
+
+- Aynı D1 veritabanı kullanılır; veriler Pages sürümüyle ortaktır.
+- `workers.dev` de ileride engellenebilir; kalıcı çözüm özel alan adıdır.
+
 ## Yönetim paneli
 
 - Adres: `https://<proje>.pages.dev/admin`
