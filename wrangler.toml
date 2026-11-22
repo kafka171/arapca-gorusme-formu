@@ -7,4 +7,4 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "gorusme-formu"
-database_id = "2b351768-09fa-4430-a95b-c3e3c981fe08"
+database_id = "d5b7dcea-7fb3-488b-abcc-ba1af3c89dff"
