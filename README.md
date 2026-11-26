@@ -141,8 +141,6 @@ Notlar:
 - **İstatistikler sekmesi**
   - Toplam/bugün/son 7 gün yanıtlar, farklı okul ve öğretmen sayıları.
   - Ders Adı, Ünite ve okul dağılım grafikleri; günlük yanıt grafiği.
-  - Giriş ekranındaki **Sunucu durumunu kontrol et** düğmesi `ADMIN_KEY` tanımlı mı,
-    D1 tablosu var mı ve yayındaki sürüm hangisi bilgisini gösterir (`/api/health`).
 
 API uçları:
 
@@ -154,15 +152,15 @@ API uçları:
 
 ### `/admin` anahtarı kabul etmiyorsa
 
-1. Giriş ekranında **Sunucu durumunu kontrol et**'e basın.
-   - `ADMIN_KEY: tanımlı DEĞİL` → Pages → Settings → Variables and Secrets → **Production**
-     ortamına `ADMIN_KEY` (Secret) ekleyin ve **Retry deployment** yapın.
-   - `D1 tablosu: YOK` → D1 Console'da `schema.console.sql` satırlarını çalıştırın.
-   - İkisi de yeşilse anahtar değeri yanlış: secret'ı **Edit** ile yeniden yazın
-     (kopyalarken baş/son boşlukları temizleyin; sunucu yine de boşlukları kırpar).
-2. Secret **Production** ortamına mı eklendi? Preview'a eklenmişse canlı adreste çalışmaz.
-3. Secret eklendikten sonra yeni bir deployment yapıldı mı?
-4. Preview adresi (`<hash>.proje.pages.dev`) kullanıyorsanız orada da ayrı secret gerekir.
+1. **“ADMIN_KEY tanımlı değil”** mesajı alıyorsanız: Pages → Settings → Variables and Secrets →
+   **Production** ortamına `ADMIN_KEY` (Secret) ekleyin ve **Retry deployment** yapın.
+2. **“Yanıtlar okunamadı”** hatası: D1 tablosu yok. D1 Console'da `schema.console.sql`
+   satırlarını çalıştırın.
+3. **“Anahtar kabul edilmedi”** mesajı: secret değeri yanlış. **Edit** ile yeniden yazın
+   (baş/son boşlukları temizleyin; sunucu yine de boşlukları kırpar).
+4. Secret **Production** ortamına mı eklendi? Preview'a eklenmişse canlı adreste çalışmaz.
+5. Secret eklendikten sonra yeni bir deployment yapıldı mı?
+6. Preview adresi (`<hash>.proje.pages.dev`) kullanıyorsanız orada da ayrı secret gerekir.
 
 ## Soruları değiştirmek
 
