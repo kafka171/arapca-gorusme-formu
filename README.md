@@ -133,9 +133,24 @@ Notlar:
 
 - Adres: `https://<proje>.pages.dev/admin`
 - Giriş: `ADMIN_KEY` değeri (yalnızca o sekme için `sessionStorage`'da tutulur).
-- **CSV indir** çıktısı `;` ayraçlı, UTF-8 BOM'ludur; Excel'de Türkçe karakterler doğru görünür.
-- Giriş ekranındaki **Sunucu durumunu kontrol et** düğmesi `ADMIN_KEY` tanımlı mı, D1 tablosu
-  var mı ve yayındaki sürüm hangisi bilgisini gösterir (`/api/health`).
+- **Yanıtlar sekmesi**
+  - Filtreler: Ders, Ünite, kayıt tarihi aralığı ve serbest metin araması.
+  - Sayfalama: sayfa başına 50 yanıt.
+  - **CSV indir** (`;` ayraçlı, UTF-8 BOM'lu) ve **Excel indir** (gerçek `.xlsx`).
+  - İndirmeler o anki filtreleri uygular.
+- **İstatistikler sekmesi**
+  - Toplam/bugün/son 7 gün yanıtlar, farklı okul ve öğretmen sayıları.
+  - Ders Adı, Ünite ve okul dağılım grafikleri; günlük yanıt grafiği.
+  - Giriş ekranındaki **Sunucu durumunu kontrol et** düğmesi `ADMIN_KEY` tanımlı mı,
+    D1 tablosu var mı ve yayındaki sürüm hangisi bilgisini gösterir (`/api/health`).
+
+API uçları:
+
+| Uç | Açıklama |
+| --- | --- |
+| `GET /api/responses` | `limit`, `offset`, `ders`, `unite`, `from`, `to`, `q` parametreleri |
+| `GET /api/stats` | toplam + dağılım istatistikleri |
+| `GET /api/export` | `format=csv` (varsayılan) veya `format=xlsx`, filtre parametreleri geçerli |
 
 ### `/admin` anahtarı kabul etmiyorsa
 

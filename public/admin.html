@@ -8,6 +8,7 @@
     <title>Yanıtlar · Görüşme Formu Yönetimi</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/admin.css" />
+    <link rel="stylesheet" href="/stats.css" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -40,38 +41,88 @@
       <section id="panel-view" class="card" hidden>
         <div class="panel-head">
           <div>
-            <h1>Yanıtlar</h1>
+            <h1>Görüşme Formu Yönetimi</h1>
             <p class="panel-sub" id="panel-sub">Yükleniyor…</p>
           </div>
-          <div class="panel-actions">
+          <div class="panel-actions" id="panel-actions">
             <button id="btn-refresh" class="btn ghost" type="button">Yenile</button>
-            <button id="btn-csv" class="btn primary" type="button">CSV indir</button>
+            <button id="btn-csv" class="btn ghost" type="button">CSV indir</button>
+            <button id="btn-xlsx" class="btn primary" type="button">Excel indir</button>
           </div>
         </div>
 
-        <div class="toolbar">
-          <label class="sr-only" for="search">Yanıtlarda ara</label>
-          <input id="search" type="search" placeholder="Yanıtlarda ara (okul, öğretmen, metin…)" />
+        <div class="tabs" role="tablist" aria-label="Görünümler">
+          <button id="tab-responses" class="tab active" type="button" role="tab" aria-selected="true">Yanıtlar</button>
+          <button id="tab-stats" class="tab" type="button" role="tab" aria-selected="false">İstatistikler</button>
         </div>
 
-        <div class="table-wrap">
-          <table class="responses">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Kayıt zamanı</th>
-                <th scope="col">Ders</th>
-                <th scope="col">Ünite</th>
-                <th scope="col">Okul</th>
-                <th scope="col">Öğretmen</th>
-                <th scope="col"><span class="sr-only">İşlemler</span></th>
-              </tr>
-            </thead>
-            <tbody id="rows"></tbody>
-          </table>
+        <div id="responses-view">
+          <div class="toolbar filters">
+            <label class="sr-only" for="filter-ders">Ders filtresi</label>
+            <select id="filter-ders" class="filter-select"></select>
+
+            <label class="sr-only" for="filter-unite">Ünite filtresi</label>
+            <select id="filter-unite" class="filter-select"></select>
+
+            <label class="sr-only" for="filter-from">Başlangıç tarihi</label>
+            <input id="filter-from" type="date" title="Başlangıç tarihi" />
+
+            <label class="sr-only" for="filter-to">Bitiş tarihi</label>
+            <input id="filter-to" type="date" title="Bitiş tarihi" />
+
+            <label class="sr-only" for="search">Yanıtlarda ara</label>
+            <input id="search" type="search" placeholder="Yanıtlarda ara (okul, öğretmen, metin…)" />
+
+            <button id="btn-clear-filters" class="btn ghost small" type="button">Temizle</button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="responses">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Kayıt zamanı</th>
+                  <th scope="col">Ders</th>
+                  <th scope="col">Ünite</th>
+                  <th scope="col">Okul</th>
+                  <th scope="col">Öğretmen</th>
+                  <th scope="col"><span class="sr-only">İşlemler</span></th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+
+          <p id="empty" class="state-text empty" hidden>Henüz yanıt yok.</p>
+
+          <div class="pagination" id="pagination" hidden>
+            <button id="btn-prev" class="btn ghost small" type="button">← Önceki</button>
+            <span id="page-info" class="page-info"></span>
+            <button id="btn-next" class="btn ghost small" type="button">Sonraki →</button>
+          </div>
         </div>
 
-        <p id="empty" class="state-text empty" hidden>Henüz yanıt yok.</p>
+        <div id="stats-view" hidden>
+          <div class="kpis" id="kpis"></div>
+          <div class="stats-grid">
+            <section class="stats-card">
+              <h3>Ders Adı dağılımı</h3>
+              <div id="chart-ders" class="bars"></div>
+            </section>
+            <section class="stats-card">
+              <h3>Ünite dağılımı</h3>
+              <div id="chart-unite" class="bars"></div>
+            </section>
+            <section class="stats-card">
+              <h3>Günlük yanıtlar</h3>
+              <div id="chart-day" class="bars day"></div>
+            </section>
+            <section class="stats-card">
+              <h3>En çok yanıt veren okullar</h3>
+              <div id="chart-okul" class="bars"></div>
+            </section>
+          </div>
+        </div>
       </section>
 
       <section id="admin-error" class="card state-card" hidden>

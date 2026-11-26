@@ -1,5 +1,7 @@
 import { authStatus, json } from "../_lib/http.js";
+import { responseFilters, countResponses, listResponses } from "../_lib/queries.js";
 
+const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 1000;
 
 const NOT_CONFIGURED =
@@ -20,23 +22,23 @@ export async function onRequestGet({ request, env }) {
   if (status !== "ok") return deny(status);
 
   const url = new URL(request.url);
+  const filters = responseFilters(url);
+
   const limit = Math.min(
     MAX_LIMIT,
-    Math.max(1, Number.parseInt(url.searchParams.get("limit") || "500", 10) || 500),
+    Math.max(1, Number.parseInt(url.searchParams.get("limit") || "", 10) || DEFAULT_LIMIT),
   );
   const offset = Math.max(0, Number.parseInt(url.searchParams.get("offset") || "0", 10) || 0);
 
   try {
-    const [countRow, rows] = await Promise.all([
-      env.DB.prepare("SELECT COUNT(*) AS total FROM responses").first(),
-      env.DB.prepare("SELECT * FROM responses ORDER BY id DESC LIMIT ? OFFSET ?")
-        .bind(limit, offset)
-        .all(),
+    const [total, rows] = await Promise.all([
+      countResponses(env, filters),
+      listResponses(env, filters, limit, offset),
     ]);
 
     return json({
       ok: true,
-      total: countRow?.total ?? 0,
+      total,
       limit,
       offset,
       rows: rows.results ?? [],
@@ -47,8 +49,7 @@ export async function onRequestGet({ request, env }) {
       {
         ok: false,
         code: "db_error",
-        error:
-          "Yanıtlar okunamadı. D1 tablosu oluşturulmuş mu? (şema: schema.console.sql)",
+        error: "Yanıtlar okunamadı. D1 tablosu oluşturulmuş mu? (şema: schema.console.sql)",
       },
       500,
     );

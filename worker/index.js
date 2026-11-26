@@ -8,6 +8,7 @@ import {
 } from "../functions/api/responses.js";
 import { onRequestGet as exportCsv } from "../functions/api/export.js";
 import { onRequestGet as health } from "../functions/api/health.js";
+import { onRequestGet as stats } from "../functions/api/stats.js";
 
 const CSP = [
   "default-src 'self'",
@@ -71,6 +72,10 @@ export default {
 
       case "/api/health":
         response = method === "GET" ? await health({ request, env }) : methodNotAllowed("GET");
+        break;
+
+      case "/api/stats":
+        response = method === "GET" ? await stats({ request, env }) : methodNotAllowed("GET");
         break;
 
       default: {
